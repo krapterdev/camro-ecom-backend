@@ -1,356 +1,272 @@
-@extends('admin.layouts.vertical', ['title' => $id > 0 ? 'Edit Product' : 'Add Product'])
+@extends('admin.layouts.vertical', ['title' => 'Add Category'])
 
 @section('content')
-<div class="container-xxl">
-    <form action="{{ route('product.manage_product_process') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="id" value="{{ $id }}">
 
-        <!-- Product Info Card -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4 class="card-title">Product Information</h4>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    {{-- Category --}}
-                    <div class="col-lg-6 mb-3">
-                        <label for="category_id" class="form-label">Select Category <span class="text-danger">*</span></label>
-                        <select id="category_id" name="category_id" class="form-select" required>
-                            <option value="">Select Category</option>
-                            @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ $category_id == $category->id ? 'selected' : '' }}>
-                                {{ $category->category_name }}
-                            </option>
-                            @endforeach
-                        </select>
-                        @error('category_id')
-                        <small class="text-danger">{{ $message }}</small>
-                        @enderror
+    <div class="container-xxl">
+        <div class="row">
+            <div class="col-xl-12 col-lg-8 ">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Add Category Banner Photo (Optional)</h4>
                     </div>
-                    <!-- Product Name -->
-                    <div class="col-lg-6 mb-3">
-                        <label class="form-label">Product Name <span class="text-danger">*</span></label>
-                        <input type="text" name="product_name" id="product-name" class="form-control" value="{{ $product_name }}" required>
-                        @error('product_name') <small class="text-danger">{{ $message }}</small> @enderror
+                    <div class="card-body p-1">
+                        <div class="dropzone bg-light-subtle p-2    ">
+                            <div class="fallback">
+                                <input name="file" type="file" multiple="multiple">
+                            </div>
+                            <div class="dz-message needsclick">
+                                <i class="bx bx-cloud-upload fs-48 text-primary"></i>
+                                <h3 class="mt-4">Drop Your Images Here, or <span class="text-primary">Click to
+                                        Browse</span></h3>
+                                <span class="text-muted fs-13">
+                                    <strong>600px x 600px</strong> recommended. <strong>PNG</strong> and <strong>JPG</strong> files are allowed
+                                </span>
+                            </div>
+                        </div>
+                        <ul class="list-unstyled mb-0" id="dropzone-preview">
+                            <li class="mt-2" id="dropzone-preview-list">
+                                <!-- This is used as the file preview template -->
+                                <div class="border rounded">
+                                    <div class="d-flex p-2">
+                                        <div class="flex-shrink-0 me-3">
+                                            <div class="avatar-sm bg-light rounded">
+                                                <img data-dz-thumbnail class="img-fluid rounded d-block" src="#"
+                                                    alt="Dropzone-Image" />
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="pt-1">
+                                                <h5 class="fs-14 mb-1" data-dz-name>&</h5>
+                                                <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                                                <strong class="error text-primary" data-dz-errormessage></strong>
+                                            </div>
+                                        </div>
+                                        <div class="flex-shrink-0 ms-3">
+                                            <button data-dz-remove class="btn btn-sm btn-primary">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <!-- end dropzon-preview -->
                     </div>
-
-                    <!-- Slug -->
-                    <div class="col-lg-6 mb-3">
-                        <label class="form-label">Slug <span class="text-danger">*</span></label>
-                        <input type="text" name="product_slug" id="product-slug" class="form-control" value="{{ $product_slug }}" required>
-                        @error('product_slug') <small class="text-danger">{{ $message }}</small> @enderror
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Category Information</h4>
                     </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label for="product-name" class="form-label">Category Name</label>
+                                    <input type="text" id="product-name" class="form-control" placeholder="Items Name">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="product-categories" class="form-label">Product
+                                    Categories</label>
+                                <select class="form-control" id="product-categories" data-choices data-choices-groups
+                                    data-placeholder="Select Categories" name="choices-single-groups">
+                                    <option value="">Choose a categories</option>
+                                    <option value="Fashion">Fashion</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Footwear">Footwear</option>
+                                    <option value="Sportswear">Sportswear</option>
+                                    <option value="Watches">Watches</option>
+                                    <option value="Furniture">Furniture</option>
+                                    <option value="Appliances">Appliances</option>
+                                    <option value="Headphones">Headphones</option>
+                                    <option value="Other Accessories">Other Accessories</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="product-brand" class="form-label">Brand</label>
+                                    <input type="text" id="product-brand" class="form-control" placeholder="Brand Name">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="product-weight" class="form-label">Weight</label>
+                                    <input type="text" id="product-weight" class="form-control" placeholder="In gm & kg">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="gender" class="form-label">Gender</label>
+                                <select class="form-control" id="gender" data-choices data-choices-groups
+                                    data-placeholder="Select Gender">
+                                    <option value="">Select Gender</option>
+                                    <option value="Men">Men</option>
+                                    <option value="Women">Women</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-lg-4">
+                                <div class="mt-3">
+                                    <h5 class="text-dark fw-medium">Size :</h5>
+                                    <div class="d-flex flex-wrap gap-2" role="group"
+                                        aria-label="Basic checkbox toggle button group">
+                                        <input type="checkbox" class="btn-check" id="size-xs1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="size-xs1">XS</label>
 
+                                        <input type="checkbox" class="btn-check" id="size-s1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="size-s1">S</label>
 
-                    <!-- Image Upload -->
-                    <div class="col-lg-6 mb-3">
-                        <label class="form-label">Product Main Image <span class="text-danger">*</span></label>
-                        <input type="file" name="product_image" accept="image/*" class="form-control mb-2">
-                        @if($product_image)
-                        <img src="{{ asset('storage/media/product/' . $product_image) }}" width="100" class="img-thumbnail">
-                        @endif
+                                        <input type="checkbox" class="btn-check" id="size-m1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="size-m1">M</label>
+
+                                        <input type="checkbox" class="btn-check" id="size-xl1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="size-xl1">Xl</label>
+
+                                        <input type="checkbox" class="btn-check" id="size-xxl1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="size-xxl1">XXL</label>
+                                        <input type="checkbox" class="btn-check" id="size-3xl1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="size-3xl1">3XL</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="mt-3">
+                                    <h5 class="text-dark fw-medium">Colors :</h5>
+                                    <div class="d-flex flex-wrap gap-2" role="group"
+                                        aria-label="Basic checkbox toggle button group">
+                                        <input type="checkbox" class="btn-check" id="color-dark1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-dark1"> <i class="bx bxs-circle fs-18 text-dark"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-yellow1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-yellow1"> <i class="bx bxs-circle fs-18 text-warning"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-white1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-white1"> <i class="bx bxs-circle fs-18 text-white"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-red1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-red1"> <i class="bx bxs-circle fs-18 text-primary"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-green1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-green1"> <i class="bx bxs-circle fs-18 text-success"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-blue1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-blue1"> <i class="bx bxs-circle fs-18 text-danger"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-sky1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-sky1"> <i class="bx bxs-circle fs-18 text-info"></i></label>
+
+                                        <input type="checkbox" class="btn-check" id="color-gray1">
+                                        <label
+                                            class="btn btn-light avatar-sm rounded d-flex justify-content-center align-items-center"
+                                            for="color-gray1"> <i class="bx bxs-circle fs-18 text-secondary"></i></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description</label>
+                                    <textarea class="form-control bg-light-subtle" id="description" rows="7"
+                                        placeholder="Short description about the product"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="product-id" class="form-label">Tag Number</label>
+                                    <input type="number" id="product-id" class="form-control" placeholder="#******">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-3">
+                                    <label for="product-stock" class="form-label">Stock</label>
+                                    <input type="number" id="product-stock" class="form-control" placeholder="Quantity">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="product-stock" class="form-label">Tag</label>
+                                <select class="form-control" id="choices-multiple-remove-button" data-choices
+                                    data-choices-removeItem name="choices-multiple-remove-button" multiple>
+                                    <option value="Fashion" selected>Fashion</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Watches">Watches</option>
+                                    <option value="Headphones">Headphones</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Product Desc -->
-                    <div class="col-lg-12 mb-3">
-                        <label class="form-label">Product Description</label>
-                        <textarea name="product_desc" class="form-control" rows="4">{{ $product_desc }}</textarea>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Pricing Details</h4>
                     </div>
-
-                    <!-- Sort Order -->
-                    <div class="col-lg-3 mb-3">
-                        <label class="form-label">Sort Order</label>
-                        <input type="number" name="sort_order" class="form-control" value="{{ $sort_order }}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label for="product-price" class="form-label">Price</label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text fs-20"><i class='bx bx-dollar'></i></span>
+                                    <input type="number" id="product-price" class="form-control" placeholder="000">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="product-discount" class="form-label">Discount</label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text fs-20"><i class='bx bxs-discount'></i></span>
+                                    <input type="number" id="product-discount" class="form-control" placeholder="000">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="product-tex" class="form-label">Tex</label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text fs-20"><i class='bx bxs-file-txt'></i></span>
+                                    <input type="number" id="product-tex" class="form-control" placeholder="000">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Status Switch -->
-                    <div class="col-lg-3 mb-3">
-                        <label class="form-label">Status</label><br>
-                        <input type="hidden" name="status" id="hiddenStatus" value="{{ $status }}">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="activeSwitch" {{ $status == 1 ? 'checked' : '' }}>
-                            <label class="form-check-label" for="activeSwitch" id="statusLabel">{{ $status == 1 ? 'Active' : 'Inactive' }}</label>
+                </div>
+                <div class="p-3 bg-light mb-3 rounded">
+                    <div class="row justify-content-end g-2">
+                        <div class="col-lg-2">
+                            <a href="#!" class="btn btn-outline-secondary w-100">Create Product</a>
+                        </div>
+                        <div class="col-lg-2">
+                            <a href="#!" class="btn btn-primary w-100">Cancel</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        {{-- Product More Images --}}
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">
-                    Product Additional Images <span id="imageCount" class="text-primary">(1)</span>
-                </h5>
-
-                <button type="button" class="btn btn-sm btn-success" onclick="addMoreImages()">+ Add Image</button>
-            </div>
-            <div class="card-body">
-                {{-- Placeholder for no images --}}
-                <div id="noImageMsg" class="text-muted text-center">No image selected.</div>
-
-                <div class="row" id="productImagesBox">
-                    <div class="col-md-3 image-box mb-3">
-                        <div class="input-group">
-                            <input type="file" name="more_images[]" class="form-control" accept="image/*">
-                            <button type="button" class="btn btn-danger" onclick="removeImageRow(this)">×</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {{-- Product More Attributes --}}
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0">Product Pricing / Weight Attributes (<span id="pricingCount">1</span>)</h5>
-                <button type="button" class="btn btn-sm btn-success" onclick="addPricingRow()">+ Add</button>
-            </div>
-
-            <div class="card-body" id="pricingContainer">
-                <!-- Initial Row -->
-                <div class="row mb-3 pricing-row align-items-end" id="row-0">
-                    <div class="col-md-2"><input type="text" class="form-control" name="weights[0][weight]" placeholder="Weight"></div>
-                    <div class="col-md-2"><input type="text" class="form-control" name="weights[0][weight_type]" placeholder="Weight Type"></div>
-                    <div class="col-md-2"><input type="number" class="form-control" name="weights[0][mrp_price]" placeholder="MRP"></div>
-                    <div class="col-md-2"><input type="number" class="form-control" name="weights[0][discount]" placeholder="Discount %"></div>
-                    <div class="col-md-2"><input type="number" class="form-control" name="weights[0][selling_price]" placeholder="Selling Price"></div>
-                    <div class="col-md-2"><input type="number" class="form-control" name="weights[0][tax_in_percentage]" placeholder="Tax %"></div>
-                    <div class="col-md-2">
-                        <select name="weights[0][tax_type]" class="form-control">
-                            <option value="exclusive">Exclusive</option>
-                            <option value="inclusive">Inclusive</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2"><input type="number" class="form-control" name="weights[0][net_price]" placeholder="Net Price"></div>
-                    <div class="col-md-2"><input type="number" class="form-control" name="weights[0][tax_in_value]" placeholder="Tax Value"></div>
-                    <div class="col-md-2"><input type="text" class="form-control" name="weights[0][hsncode]" placeholder="HSN Code"></div>
-                    <div class="col-md-1">
-                        <input type="checkbox" name="weights[0][in_stock]" value="1" checked> In Stock
-                    </div>
-                    <div class="col-md-1">
-                        <button type="button" class="btn btn-danger btn-sm" onclick="removePricingRow(this)">Remove</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="pricingEmptyText" class="text-danger px-3 d-none">No Pricing Row Found</div>
-        </div>
-
-
-
-
-        <!-- Meta SEO -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4 class="card-title">Meta Info</h4>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label class="form-label">Meta Title</label>
-                    <input type="text" name="meta_title" class="form-control" value="{{ $meta_title }}">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Meta Keywords</label>
-                    <textarea name="meta_keywords" class="form-control" rows="2">{{ $meta_keywords }}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Meta Description</label>
-                    <textarea name="meta_desc" class="form-control" rows="2">{{ $meta_desc }}</textarea>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- status managent -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4 class="card-title">Status Management</h4>
-            </div>
-            <div class="card-body">
-                <div class="row mb-4">
-
-                    @php
-                    $statusFields = [
-                    ['name' => 'in_stock', 'label' => 'In Stock', 'value' => $in_stock ?? 0],
-                    ['name' => 'cod_available', 'label' => 'Available for COD', 'value' => $cod_available ?? 0],
-                    ['name' => 'is_featured', 'label' => 'Featured Product', 'value' => $is_featured ?? 0],
-                    ['name' => 'is_trending', 'label' => 'Trending Product', 'value' => $is_trending ?? 0],
-                    ['name' => 'is_new_arrival', 'label' => 'New Arrival', 'value' => $is_new_arrival ?? 0],
-                    ['name' => 'is_combo', 'label' => 'Combo Product', 'value' => $is_combo ?? 0],
-                    ['name' => 'is_flavor', 'label' => 'Flavor is Everything', 'value' => $is_flavor ?? 0],
-                    ['name' => 'is_savor', 'label' => 'Savor the Difference', 'value' => $is_savor ?? 0],
-                    ];
-                    @endphp
-
-                    @foreach ($statusFields as $field)
-                    <div class="col-md-3 mb-2">
-                        <div class="form-check form-switch">
-                            <input type="hidden" name="{{ $field['name'] }}" value="0">
-                            <input class="form-check-input status-toggle" type="checkbox"
-                                id="{{ $field['name'] }}Switch"
-                                name="{{ $field['name'] }}"
-                                value="1"
-                                {{ $field['value'] == 1 ? 'checked' : '' }}
-                                data-label-id="{{ $field['name'] }}Label">
-
-                            <label class="form-check-label" id="{{ $field['name'] }}Label" for="{{ $field['name'] }}Switch">
-                                {!! $field['value'] == 1 ? $field['label'] : '<del>' . $field['label'] . '</del>' !!}
-                            </label>
-                        </div>
-                    </div>
-                    @endforeach
-
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Submit -->
-        <div class="text-end">
-            <button type="submit" class="btn btn-primary">
-                {{ $id > 0 ? 'Update Product' : 'Create Product' }}
-            </button>
-        </div>
-    </form>
-</div>
-
-<script>
-    document.querySelectorAll('.status-toggle').forEach(input => {
-        input.addEventListener('change', function() {
-            const labelId = this.getAttribute('data-label-id');
-            const label = document.getElementById(labelId);
-            const labelText = label.textContent;
-
-            if (this.checked) {
-                label.innerHTML = labelText;
-            } else {
-                label.innerHTML = `<del>${labelText}</del>`;
-            }
-        });
-    });
-
-    // Slug auto-generate from name
-    document.getElementById('product-name').addEventListener('input', function() {
-        let slug = this.value.toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-');
-        document.getElementById('product-slug').value = slug;
-    });
-
-    // Status Switch
-    const switchInput = document.getElementById('activeSwitch');
-    const statusLabel = document.getElementById('statusLabel');
-    const hiddenStatus = document.getElementById('hiddenStatus');
-
-    switchInput.addEventListener('change', function() {
-        if (this.checked) {
-            statusLabel.textContent = 'Active';
-            hiddenStatus.value = '1';
-        } else {
-            statusLabel.textContent = 'Inactive';
-            hiddenStatus.value = '0';
-        }
-    });
-
-    // <!-- img script -->
-
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleNoImageMessage();
-        updateImageCount(); // initial count
-    });
-
-    function addMoreImages() {
-        const html = `
-            <div class="col-md-3 image-box mb-3">
-                <div class="input-group">
-                    <input type="file" name="more_images[]" class="form-control" accept="image/*">
-                    <button type="button" class="btn btn-danger" onclick="removeImageRow(this)">×</button>
-                </div>
-            </div>`;
-        document.getElementById('productImagesBox').insertAdjacentHTML('beforeend', html);
-        toggleNoImageMessage();
-        updateImageCount(); // update count
-    }
-
-    function removeImageRow(btn) {
-        btn.closest('.image-box').remove();
-        toggleNoImageMessage();
-        updateImageCount(); // update count
-    }
-
-    function toggleNoImageMessage() {
-        const imageBoxes = document.querySelectorAll('#productImagesBox .image-box');
-        const msg = document.getElementById('noImageMsg');
-        msg.style.display = imageBoxes.length === 0 ? 'block' : 'none';
-    }
-
-    function updateImageCount() {
-        const imageBoxes = document.querySelectorAll('#productImagesBox .image-box');
-        document.getElementById('imageCount').innerText = `(${imageBoxes.length})`;
-    }
-
-
-    // <!-- attr script -->
-
-    let rowIndex = 1;
-
-    function addPricingRow() {
-        const container = document.getElementById('pricingContainer');
-        const row = document.createElement('div');
-        row.classList.add('row', 'mb-3', 'pricing-row', 'align-items-end');
-        row.id = `row-${rowIndex}`;
-
-        row.innerHTML = `
-            <div class="col-md-2"><input type="text" class="form-control" name="weights[${rowIndex}][weight]" placeholder="Weight"></div>
-            <div class="col-md-2"><input type="text" class="form-control" name="weights[${rowIndex}][weight_type]" placeholder="Weight Type"></div>
-            <div class="col-md-2"><input type="number" class="form-control" name="weights[${rowIndex}][mrp_price]" placeholder="MRP"></div>
-            <div class="col-md-2"><input type="number" class="form-control" name="weights[${rowIndex}][discount]" placeholder="Discount %"></div>
-            <div class="col-md-2"><input type="number" class="form-control" name="weights[${rowIndex}][selling_price]" placeholder="Selling Price"></div>
-            <div class="col-md-2"><input type="number" class="form-control" name="weights[${rowIndex}][tax_in_percentage]" placeholder="Tax %"></div>
-            <div class="col-md-2">
-                <select name="weights[${rowIndex}][tax_type]" class="form-control">
-                    <option value="exclusive">Exclusive</option>
-                    <option value="inclusive">Inclusive</option>
-                </select>
-            </div>
-            <div class="col-md-2"><input type="number" class="form-control" name="weights[${rowIndex}][net_price]" placeholder="Net Price"></div>
-            <div class="col-md-2"><input type="number" class="form-control" name="weights[${rowIndex}][tax_in_value]" placeholder="Tax Value"></div>
-            <div class="col-md-2"><input type="text" class="form-control" name="weights[${rowIndex}][hsncode]" placeholder="HSN Code"></div>
-            <div class="col-md-1">
-                <input type="checkbox" name="weights[${rowIndex}][in_stock]" value="1" checked> In Stock
-            </div>
-            <div class="col-md-1">
-                <button type="button" class="btn btn-danger btn-sm" onclick="removePricingRow(this)">Remove</button>
-            </div>
-        `;
-        container.appendChild(row);
-        rowIndex++;
-        updatePricingCount();
-    }
-
-    function removePricingRow(button) {
-        const row = button.closest('.row');
-        row.remove();
-
-        updatePricingCount();
-        const container = document.getElementById('pricingContainer');
-        const emptyText = document.getElementById('pricingEmptyText');
-        emptyText.classList.toggle('d-none', container.children.length > 0);
-    }
-
-    function updatePricingCount() {
-        const rows = document.querySelectorAll('.pricing-row');
-        document.getElementById('pricingCount').innerText = rows.length;
-    }
-
-    window.onload = function() {
-        updatePricingCount();
-    };
-</script>
-
-
+    </div>
 
 @endsection

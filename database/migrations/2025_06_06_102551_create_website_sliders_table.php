@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::create('website_sliders', function (Blueprint $table) {
             $table->id();
-            $table->string('slider_name');
-            $table->string('slider_slug')->unique(); // yeh line ensure karo
-            $table->string('slider_image')->nullable();
-            $table->boolean('status')->default(1);
-            $table->timestamps();
+            $table->string('text'); // pehla text field
+            $table->string('text2'); // dusra text field
+            $table->boolean('status')->default(1); // 1 active, 0 inactive
+            $table->boolean('active_in_home')->default(1); // 1 show in home, 0 not show
+            $table->timestamps(); // created_at and updated_at
         });
     }
 

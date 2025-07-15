@@ -144,8 +144,9 @@
 
     <div class="scrollbar" data-simplebar>
         <ul class="navbar-nav" id="navbar-nav">
-            <!-- <li class="menu-title">General</li> -->
-            <!-- dashboard -->
+
+            <li class="menu-title">General</li>
+
             <li class="nav-item">
                 <a class="nav-link" href="{{url('admin/dashboard')}}">
                     <span class="nav-icon">
@@ -154,7 +155,7 @@
                     <span class="nav-text"> Dashboard </span>
                 </a>
             </li>
-            <!-- category -->
+
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarCategory" data-bs-toggle="collapse" role="button"
                     aria-expanded="false" aria-controls="sidebarCategory">
@@ -174,47 +175,7 @@
                     </ul>
                 </div>
             </li>
-             <!-- markquee  -->
-            <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarmarkquee" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="sidebarmarkquee">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Markquee </span>
-                </a>
-                <div class="collapse" id="sidebarmarkquee">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{url('admin/markquee')}}">Manage Markquee</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{url('admin/markquee/manage_markquee')}}">Create Markquee</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <!-- slider  -->
-            <li class="nav-item">
-                <a class="nav-link menu-arrow" href="#sidebarSlider" data-bs-toggle="collapse" role="button"
-                    aria-expanded="false" aria-controls="sidebarSlider">
-                    <span class="nav-icon">
-                        <iconify-icon icon="solar:clipboard-list-bold-duotone"></iconify-icon>
-                    </span>
-                    <span class="nav-text"> Slider </span>
-                </a>
-                <div class="collapse" id="sidebarSlider">
-                    <ul class="nav sub-navbar-nav">
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{url('admin/slider')}}">Manage Slider</a>
-                        </li>
-                        <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{url('admin/slider/manage_slider')}}">Create Slider</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <!-- products -->
+
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarProducts" data-bs-toggle="collapse" role="button"
                     aria-expanded="false" aria-controls="sidebarProducts">
@@ -226,15 +187,24 @@
                 <div class="collapse" id="sidebarProducts">
                     <ul class="nav sub-navbar-nav">
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{url('admin/product')}}">Manage Product</a>
+                            <a class="sub-nav-link" href="product-list.php">List</a>
                         </li>
                         <li class="sub-nav-item">
-                            <a class="sub-nav-link" href="{{url('admin/product/manage_product')}}">Create Product</a>
+                            <a class="sub-nav-link" href="product-grid.php">Grid</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="product-details.php">Details</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="product-edit.php">Edit</a>
+                        </li>
+                        <li class="sub-nav-item">
+                            <a class="sub-nav-link" href="product-add.php">Create</a>
                         </li>
                     </ul>
                 </div>
             </li>
-            <!-- inventory -->
+
             <li class="nav-item">
                 <a class="nav-link menu-arrow" href="#sidebarInventory" data-bs-toggle="collapse" role="button"
                     aria-expanded="false" aria-controls="sidebarInventory">

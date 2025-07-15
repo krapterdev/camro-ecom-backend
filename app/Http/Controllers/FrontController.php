@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -14,10 +15,13 @@ class FrontController extends Controller
     public function index(Request $request)
     {
 
+
         // return view('frontend.index');
+
 
         $result['home_categories'] = DB::table('categories')
             ->where(['status' => 1])
+            ->where(['is_home' => 1])
             ->get();
 
 
@@ -839,258 +843,8 @@ class FrontController extends Controller
 
     public function homeCategories()
     {
-        $home_categories = DB::table('categories')
-            ->where('status', 1)
-            ->get();
-
-        return response()->json($home_categories);
+        return response()->json(Category::orderBy('id', 'asc')->get());
     }
-
-    public function Homeslider()
-    {
-        $home_slider = DB::table('website_sliders')
-            ->where('status', 1)
-            ->get();
-
-        return response()->json($home_slider);
-    }
-
-    public function HomeMarkquee()
-    {
-        $home_markquee = DB::table('website_markquees')
-            ->where('status', 1)
-            ->orderByDesc('id')
-            // ->limit(4)           
-            ->get();
-
-        // ->get(['id', 'text', 'text2']); // specify columns if needed
-
-        return response()->json($home_markquee);
-    }
-
-   public function Homeproducts()
-{
-    // Step 1: All categories
-    $categories = DB::table('categories')
-        ->where('status', 1)
-        ->orderByDesc('id')
-        ->get();
-
-    // Step 2: All active products
-    $products = DB::table('products')
-        ->where('status', 1)
-        ->orderByDesc('id')
-        ->get();
-
-    // Step 3: All attributes
-    $product_more_attr = DB::table('product_more_attr')->get();
-
-    // Step 4: All images
-    $product_more_images = DB::table('product_more_images')
-        ->where('status', 1)
-        ->get();
-
-    // Step 5: Group attributes by product_id
-    $groupedAttrs = [];
-    foreach ($product_more_attr as $attr) {
-        $groupedAttrs[$attr->product_id][] = $attr;
-    }
-
-    // Step 6: Group images by product_id
-    $groupedImages = [];
-    foreach ($product_more_images as $img) {
-        $groupedImages[$img->product_id][] = $img;
-    }
-
-    // Step 7: Group products by category_id
-    $groupedProducts = [];
-    foreach ($products as $product) {
-        $product->attributes = $groupedAttrs[$product->id] ?? [];
-        $product->images = $groupedImages[$product->id] ?? [];
-        $groupedProducts[$product->category_id][] = $product;
-    }
-
-    // Step 8: Attach products to categories
-    $final_output = [];
-    foreach ($categories as $category) {
-        $category->products = $groupedProducts[$category->id] ?? [];
-        $final_output[] = $category;
-    }
-
-    // Step 9: Return JSON
-    return response()->json($final_output);
-}
-
-   public function HomeProductsIsFlavor()
-{
-    // Step 1: All categories
-    $categories = DB::table('categories')
-        ->where('status', 1)
-        ->orderByDesc('id')
-        ->get();
-
-    // Step 2: All active products
-    $products = DB::table('products')
-        // ->where('status', 1)
-          ->where('is_flavor', 1)
-        ->orderByDesc('id')
-        ->get();
-
-    // Step 3: All attributes
-    $product_more_attr = DB::table('product_more_attr')->get();
-
-    // Step 4: All images
-    $product_more_images = DB::table('product_more_images')
-        ->where('status', 1)
-        ->get();
-
-    // Step 5: Group attributes by product_id
-    $groupedAttrs = [];
-    foreach ($product_more_attr as $attr) {
-        $groupedAttrs[$attr->product_id][] = $attr;
-    }
-
-    // Step 6: Group images by product_id
-    $groupedImages = [];
-    foreach ($product_more_images as $img) {
-        $groupedImages[$img->product_id][] = $img;
-    }
-
-    // Step 7: Group products by category_id
-    $groupedProducts = [];
-    foreach ($products as $product) {
-        $product->attributes = $groupedAttrs[$product->id] ?? [];
-        $product->images = $groupedImages[$product->id] ?? [];
-        $groupedProducts[$product->category_id][] = $product;
-    }
-
-    // Step 8: Attach products to categories
-    $final_output = [];
-    foreach ($categories as $category) {
-        $category->products = $groupedProducts[$category->id] ?? [];
-        $final_output[] = $category;
-    }
-
-    // Step 9: Return JSON
-    return response()->json($final_output);
-}
-
-
-
-   public function HomeProductsIsSavor()
-{
-    // Step 1: All categories
-    $categories = DB::table('categories')
-        ->where('status', 1)
-        ->orderByDesc('id')
-        ->get();
-
-    // Step 2: All active products
-    $products = DB::table('products')
-        // ->where('status', 1)
-          ->where('is_savor', 1)
-        ->orderByDesc('id')
-        ->get();
-
-    // Step 3: All attributes
-    $product_more_attr = DB::table('product_more_attr')->get();
-
-    // Step 4: All images
-    $product_more_images = DB::table('product_more_images')
-        ->where('status', 1)
-        ->get();
-
-    // Step 5: Group attributes by product_id
-    $groupedAttrs = [];
-    foreach ($product_more_attr as $attr) {
-        $groupedAttrs[$attr->product_id][] = $attr;
-    }
-
-    // Step 6: Group images by product_id
-    $groupedImages = [];
-    foreach ($product_more_images as $img) {
-        $groupedImages[$img->product_id][] = $img;
-    }
-
-    // Step 7: Group products by category_id
-    $groupedProducts = [];
-    foreach ($products as $product) {
-        $product->attributes = $groupedAttrs[$product->id] ?? [];
-        $product->images = $groupedImages[$product->id] ?? [];
-        $groupedProducts[$product->category_id][] = $product;
-    }
-
-    // Step 8: Attach products to categories
-    $final_output = [];
-    foreach ($categories as $category) {
-        $category->products = $groupedProducts[$category->id] ?? [];
-        $final_output[] = $category;
-    }
-
-    // Step 9: Return JSON
-    return response()->json($final_output);
-}
-
-
-
-
-// public function Homeproducts()
-// {
-//     // All active products
-//     $products = DB::table('products')
-//         ->where('status', 1)
-//         ->get();
-
-//     // Group products by category_id
-//     $productsByCategory = [];
-//     foreach ($products as $product) {
-//         $productsByCategory[$product->category_id][] = $product;
-//     }
-
-//     // All active attributes
-//     $attributes = DB::table('product_more_attr')->get();
-//     $groupedAttrs = [];
-//     foreach ($attributes as $attr) {
-//         $groupedAttrs[$attr->product_id][] = $attr;
-//     }
-
-//     // All active images
-//     $images = DB::table('product_more_images')
-//         ->where('status', 1)
-//         ->get();
-//     $groupedImages = [];
-//     foreach ($images as $img) {
-//         $groupedImages[$img->product_id][] = $img;
-//     }
-
-//     // Final output: Only those categories that have products
-//     $final_output = [];
-//     foreach ($productsByCategory as $category_id => $productsInCategory) {
-//         // Get category info
-//         $category = DB::table('categories')
-//             ->where('id', $category_id)
-//             ->where('status', 1)
-//             ->first();
-
-//         // Ignore if category doesn't exist or is inactive
-//         if (!$category) continue;
-
-//         // Attach attributes & images to each product
-//         $final_products = [];
-//         foreach ($productsInCategory as $product) {
-//             $product->attributes = $groupedAttrs[$product->id] ?? [];
-//             $product->images = $groupedImages[$product->id] ?? [];
-//             $final_products[] = $product;
-//         }
-
-//         // Add category with its products
-//         $category->products = $final_products;
-//         $final_output[] = $category;
-//     }
-
-//     return response()->json($final_output);
-// }
-
 
 
 }

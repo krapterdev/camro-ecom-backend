@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('website_markquees', function (Blueprint $table) {
+        Schema::create('website_home_features_products', function (Blueprint $table) {
             $table->id();
             $table->string('text'); // pehla text field
             $table->string('text2'); // dusra text field
@@ -18,7 +18,6 @@ return new class extends Migration {
             $table->boolean('active_in_home')->default(1); // 1 show in home, 0 not show
             $table->timestamps(); // created_at and updated_at
         });
-
     }
 
     /**
@@ -26,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('website_markquees');
+        Schema::dropIfExists('website_home_features_products');
     }
 };

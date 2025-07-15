@@ -6,182 +6,134 @@ use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+
 
 
 class CategoryController extends Controller
 {
-
     public function index()
     {
-        $result['data'] = Category::all();
-        return view('admin/category/index', $result);
+        return response()->json(Category::orderBy('id', 'desc')->get());
     }
 
-    public function manage_category(Request $request, $id = '')
+    public function edit($id)
     {
-        //         dd([
-//     'post' => $request->post(),
-// ]);
-
-        if ($id > 0) {
-
-            $arr = Category::where(['id' => $id])->get();
-
-            $result['category_name'] = $arr[0]->category_name;
-            $result['category_slug'] = $arr[0]->category_slug;
-            $result['category_image'] = $arr[0]->category_image;
-
-            $result['status'] = $arr[0]->status;
-            $result['status_selected'] = $arr[0]->status == 1 ? 'checked' : '';
-
-            // $result['is_home'] = $arr[0]->is_home;
-            // $result['is_home_selected'] = $arr[0]->is_home == 1 ? 'checked' : '';
-
-            $result['id'] = $arr[0]->id;
-            $result['category'] = DB::table('categories')->where(['status' => 1])->where('id', '!=', $id)->get();
-        } else {
-            $result['category_name'] = '';
-            $result['category_slug'] = '';
-            $result['category_image'] = '';
-
-            $result['status'] = 1;
-            $result['status_selected'] = 'checked';
-
-            // $result['is_home'] = 1;
-            // $result['is_home_selected'] = 'checked';
-
-            $result['id'] = 0;
-            $result['category'] = DB::table('categories')->where(['status' => 1])->get();
-        }
-
-
-
-        // if($id>0){
-        //     $arr=Category::where(['id'=>$id])->get(); 
-
-        //     $result['category_name']=$arr['0']->category_name;
-        //     $result['category_slug']=$arr['0']->category_slug;
-        //     $result['category_image']=$arr['0']->category_image;
-        //     $result['is_home']=$arr['0']->is_home;
-        //     $result['is_home_selected']="";
-        //     if($arr['0']->is_home==1){
-        //         $result['is_home_selected']="checked";
-        //     }
-        //     $result['id']=$arr['0']->id;
-
-        //     $result['category']=DB::table('categories')->where(['status'=>1])->where('id','!=',$id)->get();
-
-
-        // }else{
-        //     $result['category_name']='';
-        //     $result['category_slug']='';
-        //      $result['category_image']='';
-        //     $result['is_home']="";
-        //     $result['is_home_selected']="";
-        //     $result['id']=0;
-
-        //     $result['category']=DB::table('categories')->where(['status'=>1])->get();
-        // }
-
-        return view('admin.category.add', $result);
+        $category = Category::findOrFail($id);
+        return response()->json($category);
     }
 
-
-
-    public function manage_category_process(Request $request)
+    public function store(Request $request)
     {
-        $postdata = $request->post();
-        $postdataf = $request->file('category_image');
-
-        // dd([
-        //     'post' => $request->post(),
-        //     // 'file' => $request->file('category_image')
-        // ]);
-
-
-        // $request->validate([
-        //     'category_name' => 'required',
-        //     'category_image' => 'nullable|mimes:jpeg,jpg,png',
-        //     'category_slug' => 'required|unique:categories,category_slug,' . $request->post('id'),
-        // ]);
-
-        $request->validate([
-            'category_name' => 'required',
-            'category_image' => 'nullable|mimes:jpeg,jpg,png',
-            'category_slug' => 'required|unique:categories,category_slug,' . $request->post('id'),
-            'status' => 'required|in:0,1',
-            // 'is_home' => 'required|in:0,1',
+        // 🛡️ Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'category_name' => 'required|string|max:255',
+            'category_slug' => 'required|unique:categories,category_slug',
+            'category_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:500',
+        ], [
+            'category_image.max' => 'The image size must not exceed 500 KB.',
         ]);
 
-
-
-        if ($request->post('id') > 0) {
-            $model = Category::find($request->post('id'));
-            $msg = "Category Has been updated";
-        } else {
-            $model = new Category();
-            $msg = "Category Has been added";
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        // ✅ Image Upload / Replace
-        if ($request->hasFile('category_image')) {
+        // 🧱 Create new Category instance
+        $category = new Category();
+        $category->category_name = $request->category_name;
+        $category->category_slug = $request->category_slug;
+        $category->status = $request->status ?? 0;
 
-            // If updating, delete old image
-            if ($request->post('id') > 0) {
-                $existing = Category::find($request->post('id'));
-                if ($existing && $existing->category_image && Storage::disk('public')->exists('media/category/' . $existing->category_image)) {
-                    Storage::disk('public')->delete('media/category/' . $existing->category_image);
-                }
+        // 🖼️ Handle image upload with directory check
+        if ($request->hasFile('category_image')) {
+            $folderPath = 'media/category';
+
+            // 📂 Create folder if it doesn't exist
+            if (!Storage::exists($folderPath)) {
+                Storage::makeDirectory($folderPath);
             }
 
             $image = $request->file('category_image');
-            $ext = $image->extension();
-            $image_name = time() . '.' . $ext;
+            $imageName = time() . '.' . $image->extension();
 
-            // Save image to storage/app/public/media/category
-            $image->storeAs('media/category', $image_name, 'public');
-
-            $model->category_image = $image_name;
+            // 🪄 Save image to target folder
+            $image->storeAs($folderPath, $imageName);
+            $category->category_img = $imageName;
         }
 
-        // Save other fields
-        $model->category_name = $request->post('category_name');
-        $model->category_slug = $request->post('category_slug');
-        // $model->is_home = $request->post('is_home') !== null ? 1 : 0;
-        // $model->is_home = $request->post('is_home') == '1' ? 1 : 0;
-        $model->status = $request->post('status') == '1' ? 1 : 0;
+        // 📥 Save category to database
+        $category->save();
 
-        // $model->status = 1;
-        $model->save();
-
-        $request->session()->flash('message', $msg);
-        return redirect('admin/category');
+        // ✅ Return success response
+        return response()->json([
+            'message' => 'Category added successfully',
+        ], 200);
     }
 
-
-    public function delete(Request $request, $id)
+    public function update(Request $request, $id)
     {
-        $model = Category::find($id);
-        $model->delete();
-        $request->session()->flash('message', 'Category deleted');
-        return redirect('admin/category');
+        $category = Category::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'category_name' => 'required|string|max:255',
+            'category_slug' => 'required|unique:categories,category_slug,' . $id,
+            'category_image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:500',
+        ], [
+            'category_image.max' => 'The image size must not exceed 500 KB.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $category->category_name = $request->category_name;
+        $category->category_slug = $request->category_slug;
+        $category->status = $request->status ?? 0;
+
+        if ($request->hasFile('category_image')) {
+
+            if ($category->category_img && Storage::exists('media/category/' . $category->category_img)) {
+                Storage::delete('media/category/' . $category->category_img);
+            }
+
+            $image = $request->file('category_image');
+            $imageName = time() . '.' . $image->extension();
+            $image->storeAs('media/category', $imageName);
+            $category->category_img = $imageName;
+        }
+
+        $category->save();
+
+        return response()->json(['message' => 'Category updated successfully'], 200);
     }
 
-    public function status(Request $request, $status, $id)
+    public function updateStatus($id, $status)
     {
-        $model = Category::find($id);
-        $model->status = $status;
-        $model->save();
-        $request->session()->flash('message', 'Category status updated');
-        return redirect('admin/category');
+        $category = Category::findOrFail($id);
+        $category->status = $status;
+        $category->save();
+
+        return response()->json(['message' => 'Status updated successfully'], 200);
     }
 
-     
+    public function destroy($id)
+    {
+        $category = Category::findOrFail($id);
 
+        if ($category->category_img && Storage::exists('media/category/' . $category->category_img)) {
+            Storage::delete('media/category/' . $category->category_img);
+        }
+
+        $category->delete();
+
+        return response()->json(['message' => 'Category deleted successfully'], 200);
+    }
+
+
+    // 
 }
-
-
-
-

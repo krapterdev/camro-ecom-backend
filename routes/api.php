@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\ProductSizeController;
+use App\Http\Controllers\ProductWeightController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FrontController;
-use App\Http\Controllers\ProductWeightController;
 use App\Http\Controllers\website\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -11,17 +12,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// category routes
-// Route::prefix('admin/category')->group(function () {
-//     Route::get('categories', [CategoryController::class, 'index']);
-//     Route::get('{id}', [CategoryController::class, 'edit']);
-//     Route::post('update/{id}', [CategoryController::class, 'update']);
-//     Route::post('add-category', [CategoryController::class, 'store']);
-//     Route::put('status/{id}/{status}', [CategoryController::class, 'updateStatus']);
-//     Route::delete('delete/{id}', [CategoryController::class, 'destroy']);
-// });
-
-// 🔐 All admin routes
+// All admin routes
 Route::prefix('admin')->group(function () {
 
     // Category Routes
@@ -37,7 +28,6 @@ Route::prefix('admin')->group(function () {
     // Product Routes
     Route::prefix('products')->group(function () {
 
-        // Weight Routes
         Route::prefix('weight')->group(function () {
             Route::get('list', [ProductWeightController::class, 'index']);
             Route::post('add', [ProductWeightController::class, 'store']);
@@ -48,15 +38,14 @@ Route::prefix('admin')->group(function () {
         });
 
         //  Size Routes
-        // Route::prefix('size')->group(function () {
-        //     Route::get('list', [ProductSizeController::class, 'index']);
-        //     Route::get('add', [ProductSizeController::class, 'create']);
-        //     Route::post('add', [ProductSizeController::class, 'store']);
-        //     Route::get('edit/{id}', [ProductSizeController::class, 'edit']);
-        //     Route::post('update/{id}', [ProductSizeController::class, 'update']);
-        //     Route::put('status/{id}/{status}', [ProductSizeController::class, 'updateStatus']);
-        //     Route::delete('delete/{id}', [ProductSizeController::class, 'destroy']);
-        // });
+        Route::prefix('size')->group(function () {
+            Route::get('list', [ProductSizeController::class, 'index']);
+            Route::post('add', [ProductSizeController::class, 'store']);
+            Route::get('edit/{id}', [ProductSizeController::class, 'edit']);
+            Route::post('update/{id}', [ProductSizeController::class, 'update']);
+            Route::put('status/{id}/{status}', [ProductSizeController::class, 'updateStatus']);
+            Route::delete('delete/{id}', [ProductSizeController::class, 'destroy']);
+        });
 
         //  Pack Routes (Optional)
         // Route::prefix('pack')->group(function () {

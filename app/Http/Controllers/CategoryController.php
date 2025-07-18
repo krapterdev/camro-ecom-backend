@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        // 🛡️ Validate incoming request
+        // Validate incoming request
         $validator = Validator::make($request->all(), [
             'category_name' => 'required|string|max:255',
             'category_slug' => 'required|unique:categories,category_slug',
@@ -41,17 +41,16 @@ class CategoryController extends Controller
             ], 422);
         }
 
-        // 🧱 Create new Category instance
         $category = new Category();
         $category->category_name = $request->category_name;
         $category->category_slug = $request->category_slug;
         $category->status = $request->status ?? 0;
 
-        // 🖼️ Handle image upload with directory check
+        // Handle image upload with directory check
         if ($request->hasFile('category_image')) {
             $folderPath = 'media/category';
 
-            // 📂 Create folder if it doesn't exist
+            // Create folder if it doesn't exist
             if (!Storage::exists($folderPath)) {
                 Storage::makeDirectory($folderPath);
             }
@@ -59,15 +58,15 @@ class CategoryController extends Controller
             $image = $request->file('category_image');
             $imageName = time() . '.' . $image->extension();
 
-            // 🪄 Save image to target folder
+            // Save image to target folder
             $image->storeAs($folderPath, $imageName);
             $category->category_img = $imageName;
         }
 
-        // 📥 Save category to database
+        // Save category to database
         $category->save();
 
-        // ✅ Return success response
+        // Return success response
         return response()->json([
             'message' => 'Category added successfully',
         ], 200);

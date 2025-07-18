@@ -2,80 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProductWeight;
+
 
 class ProductWeightController extends Controller
 {
     public function index()
     {
-        $weights = ProductWeight::orderBy('id', 'desc')->get();
-        return response()->json(['status' => true, 'data' => $weights]);
+        return response()->json(ProductWeight::all());
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string|max:255',
-            'value' => 'required|string|max:255',
-            'status' => 'required|boolean',
+            'title' => 'required|string',
+            'value' => 'required|string',
         ]);
 
-        $weight = ProductWeight::create($request->only(['title', 'value', 'status']));
-
-        return response()->json(['status' => true, 'message' => 'Weight created successfully', 'data' => $weight]);
+        ProductWeight::create($request->only(['title', 'value', 'status']));
+        return response()->json(['message' => 'Weight added successfully']);
     }
 
     public function edit($id)
     {
-        $weight = ProductWeight::find($id);
-        if (!$weight) {
-            return response()->json(['status' => false, 'message' => 'Weight not found'], 404);
-        }
-
-        return response()->json(['status' => true, 'data' => $weight]);
+        $weight = ProductWeight::findOrFail($id);
+        return response()->json([
+            'success' => true,
+            'data' => $weight,
+        ]);
     }
 
     public function update(Request $request, $id)
     {
-        $weight = ProductWeight::find($id);
-        if (!$weight) {
-            return response()->json(['status' => false, 'message' => 'Weight not found'], 404);
-        }
-
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'value' => 'required|string|max:255',
-            'status' => 'required|boolean',
-        ]);
-
+        $weight = ProductWeight::findOrFail($id);
         $weight->update($request->only(['title', 'value', 'status']));
-
-        return response()->json(['status' => true, 'message' => 'Weight updated successfully']);
-    }
-
-    public function updateStatus($id, $status)
-    {
-        $weight = ProductWeight::find($id);
-        if (!$weight) {
-            return response()->json(['status' => false, 'message' => 'Weight not found'], 404);
-        }
-
-        $weight->status = $status;
-        $weight->save();
-
-        return response()->json(['status' => true, 'message' => 'Status updated successfully']);
+        return response()->json(['message' => 'Weight updated successfully']);
     }
 
     public function destroy($id)
     {
-        $weight = ProductWeight::find($id);
-        if (!$weight) {
-            return response()->json(['status' => false, 'message' => 'Weight not found'], 404);
-        }
+        ProductWeight::destroy($id);
+        return response()->json(['message' => 'Weight deleted successfully']);
+    }
 
-        $weight->delete();
+    public function updateStatus($id, $status)
+    {
+        $weight = ProductWeight::findOrFail($id);
+        $weight->status = $status;
+        $weight->save();
 
-        return response()->json(['status' => true, 'message' => 'Weight deleted successfully']);
+        return response()->json(['message' => 'Status updated']);
     }
 }

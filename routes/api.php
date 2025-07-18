@@ -40,7 +40,6 @@ Route::prefix('admin')->group(function () {
         // Weight Routes
         Route::prefix('weight')->group(function () {
             Route::get('list', [ProductWeightController::class, 'index']);
-            Route::get('add', [ProductWeightController::class, 'create']);
             Route::post('add', [ProductWeightController::class, 'store']);
             Route::get('edit/{id}', [ProductWeightController::class, 'edit']);
             Route::post('update/{id}', [ProductWeightController::class, 'update']);

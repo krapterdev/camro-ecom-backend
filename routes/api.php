@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\ProductWeightController;
 use App\Http\Controllers\website\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

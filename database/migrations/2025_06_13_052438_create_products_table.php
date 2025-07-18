@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->string('product_name');
             $table->string('product_slug')->unique();
 
-            $table->string('product_image');
+            $table->string('product_image1');
+            $table->string('product_image2');
             $table->boolean('product_stock')->default(1);
 
             $table->text('short_desc')->nullable();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSizeController;
 use App\Http\Controllers\ProductWeightController;
 use App\Http\Controllers\CategoryController;
@@ -27,6 +28,8 @@ Route::prefix('admin')->group(function () {
 
     // Product Routes
     Route::prefix('products')->group(function () {
+
+        Route::post('add', [ProductController::class, 'store']);
 
         Route::prefix('weight')->group(function () {
             Route::get('list', [ProductWeightController::class, 'index']);

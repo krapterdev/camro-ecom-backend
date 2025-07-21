@@ -78,6 +78,8 @@ Route::prefix('admin')->group(function () {
 Route::prefix('website')->group(function () {
     Route::get('categories', [FrontController::class, 'homeCategories']);
     Route::get('category/{slug}', [FrontController::class, 'getCategoryBySlug']);
+    Route::get('allproduct', action: [FrontController::class, 'getAllProduct']);
+    Route::get('product/{productslug}', [FrontController::class, 'getProductBySlug']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);

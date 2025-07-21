@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cookie;
@@ -860,5 +861,23 @@ class FrontController extends Controller
         }
 
         return response()->json($category);
+    }
+
+    public function getAllProduct()
+    {
+        return response()->json(
+            Product::where('status', 1)->orderBy('id', 'desc')->get()
+        );
+    }
+
+    public function getProductBySlug($slug)
+    {
+        $product = Product::where('product_slug', $slug)->where('status', 1)->first();
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        return response()->json($product);
     }
 }

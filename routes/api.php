@@ -80,6 +80,7 @@ Route::prefix('website')->group(function () {
     Route::get('category/{slug}', [FrontController::class, 'getCategoryBySlug']);
     Route::get('allproduct', action: [FrontController::class, 'getAllProduct']);
     Route::get('product/{productslug}', [FrontController::class, 'getProductBySlug']);
+    Route::get('productbycatid/{cateid}', [FrontController::class, 'productsByCategory']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);

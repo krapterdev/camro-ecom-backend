@@ -16,6 +16,8 @@ return new class extends Migration {
 
             $table->string('weight')->nullable();
             $table->string('weight_type')->nullable();
+            $table->string('size')->nullable();
+            $table->string('size_type')->nullable();
             $table->decimal('mrp_price', 10, 2)->nullable();
             $table->decimal('discount', 5, 2)->nullable();
             $table->decimal('selling_price', 10, 2)->nullable();

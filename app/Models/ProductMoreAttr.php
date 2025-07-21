@@ -10,6 +10,8 @@ class ProductMoreAttr extends Model
 
     protected $fillable = [
         'product_id',
+        'size',
+        'size_type',
         'weight',
         'weight_type',
         'mrp_price',
@@ -26,6 +28,6 @@ class ProductMoreAttr extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class, 'pid');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

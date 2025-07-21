@@ -843,8 +843,22 @@ class FrontController extends Controller
 
     public function homeCategories()
     {
-        return response()->json(Category::orderBy('id', 'asc')->get());
+        return response()->json(
+            Category::where('status', 1)
+                ->orderBy('id', 'asc')
+                ->get()
+        );
     }
 
 
+    public function getCategoryBySlug($slug)
+    {
+        $category = Category::where('category_slug', $slug)->where('status', 1)->first();
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        return response()->json($category);
+    }
 }

@@ -30,6 +30,13 @@ Route::prefix('admin')->group(function () {
     Route::prefix('products')->group(function () {
 
         Route::post('add', [ProductController::class, 'store']);
+        Route::get('list', [ProductController::class, 'index']);
+        Route::get('edit/{id}', [ProductController::class, 'edit']);
+        Route::post('update/{id}', [ProductController::class, 'update']);
+        Route::put('status/{id}/{status}', [ProductController::class, 'updateStatus']);
+        Route::delete('delete/{id}', [ProductController::class, 'destroy']);
+        Route::delete('/products/more-image/delete/{id}', [ProductController::class, 'deleteVariationImage']);
+
 
         Route::prefix('weight')->group(function () {
             Route::get('list', [ProductWeightController::class, 'index']);
@@ -70,6 +77,7 @@ Route::prefix('admin')->group(function () {
 // website routes
 Route::prefix('website')->group(function () {
     Route::get('categories', [FrontController::class, 'homeCategories']);
+    Route::get('category/{slug}', [FrontController::class, 'getCategoryBySlug']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);

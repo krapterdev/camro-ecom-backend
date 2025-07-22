@@ -865,14 +865,22 @@ class FrontController extends Controller
 
     public function getAllProduct()
     {
-        return response()->json(
-            Product::where('status', 1)->orderBy('id', 'desc')->get()
-        );
+        $products = Product::with(['productAttrs', 'productImages'])
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($products);
     }
+
+
 
     public function getProductBySlug($productslug)
     {
-        $product = Product::where('product_slug', $productslug)->where('status', 1)->first();
+        $product = Product::with(['productAttrs', 'productImages'])
+            ->where('product_slug', $productslug)
+            ->where('status', 1)
+            ->first();
 
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
@@ -881,9 +889,10 @@ class FrontController extends Controller
         return response()->json($product);
     }
 
+
     public function productsByCategory($cateid)
     {
-        $products = Product::with(['productAttrs', 'productImages']) // 👈 eager loaded
+        $products = Product::with(['productAttrs', 'productImages'])
             ->where('category_id', $cateid)
             ->where('status', 1)
             ->orderBy('id', 'desc')

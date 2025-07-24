@@ -31,12 +31,10 @@ return new class extends Migration {
             // Status Management
             $table->boolean('in_stock')->default(1);
             $table->boolean('cod_available')->default(0);
-            $table->boolean('is_featured')->default(0);
+            $table->boolean('is_triplyhammered')->default(0);
             $table->boolean('is_trending')->default(0);
             $table->boolean('is_new_arrival')->default(0);
-            $table->boolean('is_combo')->default(0);
-            $table->boolean('is_flavor')->default(0);
-            $table->boolean('is_savor')->default(0);
+            $table->boolean('is_besteller')->default(0);
 
             $table->timestamps();
 

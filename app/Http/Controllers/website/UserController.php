@@ -48,58 +48,23 @@ class UserController extends Controller
             ], 401);
         }
     }
-    // public function authenticate(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'email' => 'required|email',
-    //         'password' => 'required',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'status' => 400,
-    //             'errors' => $validator->errors()
-    //         ], 400);
-    //     }
-
-    //     if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-    //         $user = User::find(Auth::user()->id);
-    //         $token = $user->createToken('token')->plainTextToken;
-    //         return response()->json([
-    //             'status' => 200,
-    //             'token' => $token,
-    //             'id' => $user->id,
-    //             'name' => $user->name
-    //         ], 200);
-    // if ($user->role == 'admin') {
-    // $token = $user->createToken('token')->plainTextToken;
-    // return response()->json([
-    //     'status' => 200,
-    //     'token' => $token,
-    //     'id' => $user->id,
-    //     'name' => $user->name
-    // ], 200);
-    // } else {
-    //     return response()->json([
-    //         'status' => 401,
-    //         'message' => 'Yor are authorize to access admin panel'
-    //     ], 401);
-    // }
-    //     } else {
-    //         return response()->json([
-    //             'status' => 401,
-    //             'message' => 'Either email or password is incorrect'
-    //         ], 401);
-    //     }
-    // }
 
 
     public function register(Request $request)
     {
         $rules = [
-            'name' => 'required',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'company_name' => 'nullable|string',
+            'phone' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
+            'country' => 'required|string',
+            'city' => 'required|string',
+            'state' => 'required|string',
+            'zip_code' => 'required|string',
+            'street_address' => 'required|string',
+            'order_notes' => 'nullable|string',
+            'password' => 'required|string|min:6',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -112,15 +77,23 @@ class UserController extends Controller
         }
 
         $user = new User();
-        $user->name = $request->name;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->phone = $request->phone;
         $user->email = $request->email;
+        $user->country = $request->country;
+        $user->city = $request->city;
+        $user->state = $request->state;
+        $user->zip_code = $request->zip_code;
+        $user->street_address = $request->street_address;
         $user->password = Hash::make($request->password);
+        $user->show_password = $request->password;
         $user->role = 'customer';
         $user->save();
 
         return response()->json([
             'status' => 200,
-            'message' => 'You have been registered successfully.'
-        ], 200);
+            'message' => 'Registration successful. Please check your email to verify your account.'
+        ]);
     }
 }

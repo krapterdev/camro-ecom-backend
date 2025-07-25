@@ -85,6 +85,13 @@ Route::prefix('website')->group(function () {
     Route::get('new-arrivals-products', [FrontController::class, 'productsByNewArrivals']);
     Route::get('best-sellers-products', [FrontController::class, 'productsByBestSellers']);
     Route::get('trending-products-products', [FrontController::class, 'productsByTrendingProducts']);
+    
+    // Authentication Routes
+    Route::post('user-register', [UserController::class, 'register']);
+    
+    
+    
+    
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);

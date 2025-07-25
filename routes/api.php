@@ -81,6 +81,10 @@ Route::prefix('website')->group(function () {
     Route::get('allproduct', action: [FrontController::class, 'getAllProduct']);
     Route::get('product/{productslug}', [FrontController::class, 'getProductBySlug']);
     Route::get('productbycatid/{cateid}', [FrontController::class, 'productsByCategory']);
+    Route::get('triply-products', [FrontController::class, 'productsByTriply']);
+    Route::get('new-arrivals-products', [FrontController::class, 'productsByNewArrivals']);
+    Route::get('best-sellers-products', [FrontController::class, 'productsByBestSellers']);
+    Route::get('trending-products-products', [FrontController::class, 'productsByTrendingProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);

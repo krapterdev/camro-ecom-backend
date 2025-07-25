@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-
     public function store(Request $request)
     {
         $request->validate([
@@ -23,13 +22,33 @@ class ProductController extends Controller
             'category_id'      => 'required|exists:categories,id',
             'product_image1'   => 'nullable|image|mimes:jpeg,jpg,png',
             'product_image2'   => 'nullable|image|mimes:jpeg,jpg,png',
-        ]);         
+            // 'status'            => 'nullable|boolean',
+            // 'in_stock'          => 'nullable|boolean',
+            // 'cod_available'     => 'nullable|boolean',
+            // 'is_triplyhammered' => 'nullable|boolean',
+            // 'is_trending'       => 'nullable|boolean',
+            // 'is_new_arrival'    => 'nullable|boolean',
+            // 'is_besteller'      => 'nullable|boolean',
+            // 'meta_title'        => 'nullable|string|max:255',
+            // 'meta_keywords'     => 'nullable|string',
+            // 'meta_desc'         => 'nullable|string',
+        ]);
 
         $product = new Product();
-        $product->product_name  = $request->product_name;
-        $product->product_slug  = Str::slug($request->product_slug);
-        $product->product_desc  = $request->product_desc;
-        $product->category_id   = $request->category_id;
+        $product->product_name       = $request->product_name;
+        $product->product_slug       = Str::slug($request->product_slug);
+        $product->product_desc       = $request->product_desc;
+        $product->category_id        = $request->category_id;
+        $product->status             = $request->boolean('status');
+        $product->in_stock           = $request->boolean('in_stock');
+        $product->cod_available      = $request->boolean('cod_available');
+        $product->is_triplyhammered  = $request->boolean('is_triplyhammered');
+        $product->is_trending        = $request->boolean('is_trending');
+        $product->is_new_arrival     = $request->boolean('is_new_arrival');
+        $product->is_besteller       = $request->boolean('is_besteller');
+        $product->meta_title         = $request->meta_title;
+        $product->meta_keywords      = $request->meta_keywords;
+        $product->meta_desc          = $request->meta_desc;
 
         // Upload Image 1
         if ($request->hasFile('product_image1')) {
@@ -66,12 +85,12 @@ class ProductController extends Controller
                     'tax_in_value'      => $row['tax_in_value'] ?? 40,
                     'net_price'         => $row['net_price'] ?? 0,
                     'hsncode'           => $row['productcode'] ?? '',
-                    'in_stock'          => 1,
+                    'in_stock'          => isset($row['in_stock']) && $row['in_stock'] ? 1 : 0,
                 ]);
             }
         }
 
-        // Handle Variation Images (if any)
+        // Handle Variation Images
         if ($request->hasFile('more_images')) {
             foreach ($request->file('more_images') as $img) {
                 $filename = time() . '_' . uniqid() . '.' . $img->getClientOriginalExtension();
@@ -87,6 +106,7 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product created successfully', 'product_id' => $product->id]);
     }
+
 
     public function index()
     {

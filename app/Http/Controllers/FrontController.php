@@ -900,4 +900,50 @@ class FrontController extends Controller
 
         return response()->json($products);
     }
+
+    public function productsByTriply()
+    {
+        $products = Product::with(['productAttrs', 'productImages'])
+            ->where('is_triplyhammered', 1)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($products);
+    }
+
+
+    public function productsByNewArrivals()
+    {
+        $products = Product::with(['productAttrs', 'productImages'])
+            ->where('is_new_arrival', 1)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($products);
+    }
+
+    public function productsByBestSellers()
+    {
+        $products = Product::with(['productAttrs', 'productImages'])
+            ->where('is_besteller', 1)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($products);
+    }
+
+    public function productsByTrendingProducts()
+    {
+        $products = Product::with(['productAttrs', 'productImages'])
+            ->where('is_trending', 1)
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($products);
+    }
+
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSizeController;
 use App\Http\Controllers\ProductWeightController;
@@ -85,13 +86,30 @@ Route::prefix('website')->group(function () {
     Route::get('new-arrivals-products', [FrontController::class, 'productsByNewArrivals']);
     Route::get('best-sellers-products', [FrontController::class, 'productsByBestSellers']);
     Route::get('trending-products-products', [FrontController::class, 'productsByTrendingProducts']);
-    
+
     // Authentication Routes
     Route::post('user-register', [UserController::class, 'register']);
-    
-    
-    
-    
+    // Route::post('user-login', [UserController::class, 'login']);
+    Route::post('/user-login', [UserController::class, 'login']);
+    Route::post('/user-logout', [UserController::class, 'logout']);
+
+    Route::post('user-profile', [UserController::class, 'userProfile']);
+    Route::post('user-check', [UserController::class, 'userCheck']);
+    Route::post('forget-password', [UserController::class, 'forgetPassword']);
+    Route::post('reset-password', [UserController::class, 'resetPassword']);
+    Route::post('update-password', [UserController::class, 'updatePassword']);
+    Route::post('verify-email', [UserController::class, 'verifyEmail']);
+
+    Route::post('add-cart', [CartController::class, 'store']);
+
+
+
+
+
+
+
+
+
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);
     // Route::get('products', [FrontController::class, 'homeProducts']);

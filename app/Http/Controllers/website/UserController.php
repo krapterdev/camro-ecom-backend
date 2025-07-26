@@ -9,46 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Email;
-
+use Laravel\Sanctum\PersonalAccessToken;
 use function Laravel\Prompts\password;
 
 class UserController extends Controller
 {
-
-    public function authenticate(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 400,
-                'errors' => $validator->errors()
-            ], 400);
-        }
-
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $user = Auth::user();
-
-            return response()->json([
-                'status' => 200,
-                'message' => 'Login successful',
-                'user' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role
-                ]
-            ]);
-        } else {
-            return response()->json([
-                'status' => 401,
-                'message' => 'Invalid credentials'
-            ], 401);
-        }
-    }
-
 
     public function register(Request $request)
     {
@@ -95,5 +60,77 @@ class UserController extends Controller
             'status' => 200,
             'message' => 'Registration successful. Please check your email to verify your account.'
         ]);
+    }
+
+
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'errors' => $validator->errors()
+            ], 400);
+        }
+
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Invalid credentials'
+            ], 401);
+        }
+
+        $user = Auth::user();
+        $token = $user->createToken('login_token')->plainTextToken;
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Login successful',
+            'user' => [
+                'email' => $user->email,
+                'role' => $user->role
+            ],
+            'token' => $token
+        ]);
+    }
+
+    public function userProfile(Request $request)
+    {
+        $user = $request->user();
+        return response()->json([
+            'status' => 200,
+            'user' => $user
+        ]);
+    }
+
+
+    public function userCheck(Request $request)
+    {
+        $token = $request->token;
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if (!$accessToken) {
+            return response()->json(['user' => null], 401);
+        }
+
+        $user = $accessToken->tokenable;
+
+        return response()->json(['user' => $user]);
+    }
+
+    public function logout(Request $request)
+    {
+        $token = $request->token;
+        $accessToken = PersonalAccessToken::findToken($token);
+
+        if ($accessToken) {
+            $accessToken->delete();
+        }
+
+        return response()->json(['message' => 'Logged out']);
     }
 }

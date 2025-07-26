@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -17,30 +18,22 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
-        $userId = Auth::id();
 
-        $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity'   => 'required|integer|min:1',
-        ]);
-
-        $cartItem = Cart::where('user_id', $userId)
-                        ->where('product_id', $validated['product_id'])
-                        ->first();
-
-        if ($cartItem) {
-            $cartItem->quantity += $validated['quantity'];
-            $cartItem->save();
-        } else {
-            Cart::create([
-                'user_id'    => $userId,
-                'product_id' => $validated['product_id'],
-                'quantity'   => $validated['quantity'],
-            ]);
+        foreach ($request->items as $item) {
+            Cart::updateOrCreate(
+                [
+                    'user_id' => $item['product_id'],
+                    'product_id' => $item['product_id']
+                ],
+                [
+                    'quantity' => $item['quantity']
+                ]
+            );
         }
 
-        return response()->json(['message' => 'Added to cart']);
+        return response()->json(['message' => 'Cart saved successfully']);
     }
+
 
     public function destroy($id)
     {

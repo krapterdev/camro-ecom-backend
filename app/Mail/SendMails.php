@@ -44,18 +44,18 @@ class SendMails extends Mailable
     /**
      * Define the content (HTML or plain text)
      */
-    public function content(): Content
-    {
-        $html = <<<HTML
-    <div style="font-family: Arial; padding: 20px;">
-        <h2>Hello {$this->data['name']}</h2>
-        <p><strong>Phone:</strong> {$this->data['phone']}</p>
-        <p><strong>Message:</strong> {$this->data['message']}</p>
-    </div>
-    HTML;
+    // public function content(): Content
+    // {
+    //     $html = <<<HTML
+    // <div style="font-family: Arial; padding: 20px;">
+    //     <h2>Hello {$this->data['name']}</h2>
+    //     <p><strong>Phone:</strong> {$this->data['phone']}</p>
+    //     <p><strong>Message:</strong> {$this->data['message']}</p>
+    // </div>
+    // HTML;
 
-        return new Content(html: $html);
-    }
+    //     return new Content(html: $html);
+    // }
 
 
     /**

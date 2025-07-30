@@ -11,14 +11,9 @@ class MailApiController extends Controller
 
     public function sendEmail(Request $request)
     {
-        $data = [
-            'subject' => 'Inline Email Example',
-            'name' => 'Sahil Kumar',
-            'message' => 'This email was sent without any view file!',
-        ];
+        $data = $request->only(['name', 'email', 'phone', 'message', 'subject']);
+        Mail::to('receiver@example.com')->send(new SendMails($data));
 
-        Mail::to('krapter.dev@gmail.com')->send(new SendMails($data));
-
-        return response()->json(['message' => 'Email sent without view successfully']);
+        return response()->json(['status' => 'Mail Sent']);
     }
 }

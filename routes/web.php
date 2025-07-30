@@ -11,6 +11,7 @@ Route::get('/', function () {
 
 // website routers start
 // Route::get('/', [FrontController::class, 'index']);
+// Route::post('/emails/send', [FrontController::class, 'sendEmail']);
 
 // Route::get('/categories', [FrontController::class, 'homeCategories']);
 // Route::get('/slider', [FrontController::class, 'slider']);

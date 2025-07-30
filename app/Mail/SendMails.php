@@ -3,12 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailables\Address;
 
 
 class SendMails extends Mailable
@@ -17,76 +18,53 @@ class SendMails extends Mailable
 
     public $data;
 
+    /**
+     * Create a new message instance.
+     */
     public function __construct($data)
     {
         $this->data = $data;
     }
 
-    public function build()
+    /**
+     * Define the envelope (subject, sender, etc.)
+     */
+
+    public function envelope(): Envelope
     {
-        return $this->subject($this->data['subject'])
-            ->html(
-                "<h1>Hello {$this->data['name']}</h1>
-                         <p>{$this->data['message']}</p>"
-            );
+        return new Envelope(
+            subject: $this->data['subject'] ?? 'No Subject',
+            from: new Address(
+                $this->data['email'] ?? 'sahil@webmartindia.in',
+                $this->data['name'] ?? 'gmgcart'
+            )
+        );
+    }
+
+    /**
+     * Define the content (HTML or plain text)
+     */
+    public function content(): Content
+    {
+        $html = <<<HTML
+    <div style="font-family: Arial; padding: 20px;">
+        <h2>Hello {$this->data['name']}</h2>
+        <p><strong>Phone:</strong> {$this->data['phone']}</p>
+        <p><strong>Message:</strong> {$this->data['message']}</p>
+    </div>
+    HTML;
+
+        return new Content(html: $html);
+    }
+
+
+    /**
+     * Attach files if needed
+     */
+    public function attachments(): array
+    {
+        return isset($this->data['filePath'])
+            ? [Attachment::fromPath($this->data['filePath'])]
+            : [];
     }
 }
-
-
-
-
-// namespace App\Mail;
-
-// use Illuminate\Bus\Queueable;
-// use Illuminate\Contracts\Queue\ShouldQueue;
-// use Illuminate\Mail\Mailable;
-// use Illuminate\Mail\Mailables\Content;
-// use Illuminate\Mail\Mailables\Envelope;
-// use Illuminate\Queue\SerializesModels;
-
-
-
-// class SendMails extends Mailable
-// {
-//     use Queueable, SerializesModels;
-
-//     public $data;
-
-//     public function __construct($data)
-//     {
-//         $this->data = $data;
-//     }
-
-//     public function envelope(): Envelope
-//     {
-//         return new Envelope(
-//             subject: $this->data['subject'],
-//         );
-//     }
-//     public function content(): Content
-//     {
-//         return new Content(
-//             view: 'emails.sendMails',
-//             with: [
-//                 'name' => $this->data['name'],
-//                 'message' => $this->data['message'],
-//             ],
-//         );
-//     }
-//     public function attachments(): array
-//     {
-//         return [];
-//     }
-//     public function build()
-//     {
-//         return $this->view('emails.sendMails');
-//     }
-
-
-//     public function render()
-//     {
-//         return $this->view('emails.sendMails');
-//     }
-// }
-
-

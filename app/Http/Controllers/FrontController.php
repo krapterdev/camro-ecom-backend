@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Cookie;
 
 class FrontController extends Controller
 {
+    public function sendEmail(Request $request){
+        view('emails.sendmails');
+    }
     public function index(Request $request)
     {
 

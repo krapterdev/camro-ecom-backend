@@ -15,7 +15,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/send-mail', [MailApiController::class, 'send']);
+Route::post('/send-mail', [MailApiController::class, 'sendMail']);
 
 
 // All admin routes
@@ -136,3 +136,11 @@ Route::prefix('website')->group(function () {
 
 
 // Route::post('/login', [UserController::class, 'authenticate']);
+
+
+// {
+//   "name": "Sahil Kumar",
+//   "phone": "9876543210",
+//   "message": "Testing email from Postman!",
+//   "subject": "Postman Email Test"
+// }

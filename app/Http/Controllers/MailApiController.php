@@ -9,13 +9,16 @@ use App\Mail\SendMails;
 class MailApiController extends Controller
 {
 
-
-    public function send(Request $request)
+    public function sendEmail(Request $request)
     {
-        $data = $request->only(['name', 'phone', 'message', 'subject']);
+        $data = [
+            'subject' => 'Inline Email Example',
+            'name' => 'Sahil Kumar',
+            'message' => 'This email was sent without any view file!',
+        ];
 
-        Mail::to('receiver@example.com')->send(new SendMails($data));
+        Mail::to('krapter.dev@gmail.com')->send(new SendMails($data));
 
-        return response()->json(['status' => 'Mail Sent']);
+        return response()->json(['message' => 'Email sent without view successfully']);
     }
 }

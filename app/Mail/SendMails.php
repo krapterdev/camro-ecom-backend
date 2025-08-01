@@ -30,15 +30,27 @@ class SendMails extends Mailable
      * Define the envelope (subject, sender, etc.)
      */
 
+
     public function envelope(): Envelope
     {
         return new Envelope(
             subject: $this->data['subject'] ?? 'No Subject',
             from: new Address(
-                $this->data['email'] ?? 'sahil@webmartindia.in',
-                $this->data['name'] ?? 'gmgcart'
+                $this->data['email'] ?? 'noreply@gmgcart.in',
+                $this->data['name'] ?? 'GMGCart'
             )
         );
+    }
+
+    public function content(): Content
+    {
+        $html = "
+        <h2>Hello {$this->data['name']}</h2>
+        <p><strong>Phone:</strong> {$this->data['phone']}</p>
+        <p><strong>Message:</strong> {$this->data['message']}</p>
+    ";
+
+        return new Content(html: $html);
     }
 
     /**
@@ -61,10 +73,10 @@ class SendMails extends Mailable
     /**
      * Attach files if needed
      */
-    public function attachments(): array
-    {
-        return isset($this->data['filePath'])
-            ? [Attachment::fromPath($this->data['filePath'])]
-            : [];
-    }
+    // public function attachments(): array
+    // {
+    //     return isset($this->data['filePath'])
+    //         ? [Attachment::fromPath($this->data['filePath'])]
+    //         : [];
+    // }
 }

@@ -15,7 +15,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/send-mail', [MailApiController::class, 'sendMail']);
+Route::post('send-mail', [MailApiController::class, 'send']);
 
 
 // All admin routes

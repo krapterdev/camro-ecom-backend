@@ -9,10 +9,10 @@ use App\Mail\SendMails;
 class MailApiController extends Controller
 {
 
-    public function sendEmail(Request $request)
+    public function send(Request $request)
     {
         $data = $request->only(['name', 'email', 'phone', 'message', 'subject']);
-        Mail::to('receiver@example.com')->send(new SendMails($data));
+        Mail::to('krapter.dev@gmail.com')->send(new SendMails($data));
 
         return response()->json(['status' => 'Mail Sent']);
     }

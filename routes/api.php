@@ -6,16 +6,35 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductSizeController;
 use App\Http\Controllers\ProductWeightController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\website\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('send-mail', [MailApiController::class, 'send']);
+Route::post('/send-mail', [MailApiController::class, 'send']);
+
+
+Route::post('/send-enquiry', function (Request $request) {
+$data = [
+    'name' => $request->name,
+    'email' => $request->email,
+    'user_message' => $request->message
+];
+
+Mail::send('emails.contact_enquiry', $data, function ($message) use ($data) {
+    $message->to('krapter.dev@gmail.com')
+            ->subject('Website Enquiry');
+});
+
+
+    return response()->json(['message' => 'Mail sent successfully']);
+});
 
 
 // All admin routes

@@ -20,23 +20,6 @@ Route::get('/user', function (Request $request) {
 Route::post('/send-mail', [MailApiController::class, 'send']);
 
 
-Route::post('/send-enquiry', function (Request $request) {
-$data = [
-    'name' => $request->name,
-    'email' => $request->email,
-    'user_message' => $request->message
-];
-
-Mail::send('emails.contact_enquiry', $data, function ($message) use ($data) {
-    $message->to('krapter.dev@gmail.com')
-            ->subject('Website Enquiry');
-});
-
-
-    return response()->json(['message' => 'Mail sent successfully']);
-});
-
-
 // All admin routes
 Route::prefix('admin')->group(function () {
 

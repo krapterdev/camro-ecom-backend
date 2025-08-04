@@ -8,28 +8,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Email;
 use Laravel\Sanctum\PersonalAccessToken;
-use function Laravel\Prompts\password;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMails;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
-
     public function register(Request $request)
     {
         $rules = [
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-            'company_name' => 'nullable|string',
-            'phone' => 'required|string|unique:users',
-            'email' => 'required|email|unique:users',
-            'country' => 'required|string',
-            'city' => 'required|string',
-            'state' => 'required|string',
-            'zip_code' => 'required|string',
-            'street_address' => 'required|string',
-            'order_notes' => 'nullable|string',
-            'password' => 'required|string|min:6',
+            'first_name'      => 'required|string',
+            'last_name'       => 'required|string',
+            'phone'           => 'required|string|unique:users',
+            'email'           => 'required|email|unique:users',
+            'country'         => 'required|string',
+            'city'            => 'required|string',
+            'state'           => 'required|string',
+            'zip_code'        => 'required|string',
+            'street_address'  => 'required|string',
+            'password'        => 'required|string|min:6',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -56,17 +54,42 @@ class UserController extends Controller
         $user->role = 'customer';
         $user->save();
 
+        $encryptedId = Crypt::encryptString($user->id);
+        $verificationLink = url('/website/api/email/verify?id=' . urlencode($encryptedId));
+
+
+        $emailData = [
+            'template' => 'email_verification',
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'email' => $user->email,
+            'verification_link' => $verificationLink
+        ];
+
+        try {
+            // ✅ Send mail directly
+            Mail::to($user->email)->send(new SendMails(
+                $emailData,
+                'Verify Your Email',
+                'emails.user.email_verification'
+            ));
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => 500,
+                'message' => 'User created but failed to send verification email',
+                'error'   => $e->getMessage(),
+            ], 500);
+        }
+
         return response()->json([
-            'status' => 200,
-            'message' => 'Registration successful. Please check your email to verify your account.'
+            'status'  => 200,
+            'message' => 'Registration successful. Please check your email to verify your account.',
         ]);
     }
-
 
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required'
         ]);
 
@@ -77,60 +100,81 @@ class UserController extends Controller
             ], 400);
         }
 
-        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
-                'status' => 401,
+                'status'  => 401,
                 'message' => 'Invalid credentials'
             ], 401);
         }
 
-        $user = Auth::user();
+        $user  = Auth::user();
         $token = $user->createToken('login_token')->plainTextToken;
 
         return response()->json([
-            'status' => 200,
+            'status'  => 200,
             'message' => 'Login successful',
-            'user' => [
+            'user'    => [
                 'email' => $user->email,
-                'role' => $user->role
+                'role'  => $user->role,
             ],
-            'token' => $token
+            'token'   => $token
         ]);
     }
 
     public function userProfile(Request $request)
     {
-        $user = $request->user();
         return response()->json([
             'status' => 200,
-            'user' => $user
+            'user'   => $request->user()
         ]);
     }
 
-
     public function userCheck(Request $request)
     {
-        $token = $request->token;
-        $accessToken = PersonalAccessToken::findToken($token);
+        $accessToken = PersonalAccessToken::findToken($request->token);
 
         if (!$accessToken) {
             return response()->json(['user' => null], 401);
         }
 
-        $user = $accessToken->tokenable;
-
-        return response()->json(['user' => $user]);
+        return response()->json(['user' => $accessToken->tokenable]);
     }
 
     public function logout(Request $request)
     {
-        $token = $request->token;
-        $accessToken = PersonalAccessToken::findToken($token);
+        $accessToken = PersonalAccessToken::findToken($request->token);
 
         if ($accessToken) {
             $accessToken->delete();
         }
 
         return response()->json(['message' => 'Logged out']);
+    }
+    public function verifyEmail(Request $request)
+    {
+        try {
+            $encryptedId = $request->query('id');
+            $userId = Crypt::decryptString($encryptedId);
+
+            $user = User::find($userId);
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            // Already verified?
+            if ($user->email_verified) {
+                return response()->json(['message' => 'Email already verified.'], 200);
+            }
+
+            $user->email_verified = 1;
+            $user->email_verified_at = now();
+            $user->save();
+
+            // Redirect or JSON message
+            return response()->json(['message' => 'Email verified successfully!'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Invalid or expired verification link.'], 400);
+        }
     }
 }

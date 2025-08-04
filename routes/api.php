@@ -12,13 +12,17 @@ use App\Http\Controllers\website\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+ 
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
 
 Route::post('/send-mail', [MailApiController::class, 'send']);
 
+Route::get('/website/api/email/verify', [UserController::class, 'verifyEmail']);
 
 // All admin routes
 Route::prefix('admin')->group(function () {

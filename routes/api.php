@@ -20,11 +20,6 @@ Route::get('/user', function (Request $request) {
 Route::post('/send-mail', [MailApiController::class, 'send']);
 
 
-<<<<<<< HEAD
-=======
- 
-
->>>>>>> new
 // All admin routes
 Route::prefix('admin')->group(function () {
 

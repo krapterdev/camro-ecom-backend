@@ -17,19 +17,19 @@
                     <tbody>
                         <tr>
                             <th scope="row">Name</th>
-                            <td>{{ $contactData['name'] }}</td>
+                            <td><?php echo e($contactData['name']); ?></td>
                         </tr>
                         <tr>
                             <th scope="row">Email</th>
-                            <td>{{ $contactData['email'] }}</td>
+                            <td><?php echo e($contactData['email']); ?></td>
                         </tr>
                         <tr>
                             <th scope="row">Phone</th>
-                            <td>{{ $contactData['phone'] }}</td>
+                            <td><?php echo e($contactData['phone']); ?></td>
                         </tr>
                         <tr>
                             <th scope="row">Message</th>
-                            <td>{{ $contactData['message'] }}</td>
+                            <td><?php echo e($contactData['message']); ?></td>
                         </tr>
                     </tbody>
                 </table>
@@ -42,3 +42,4 @@
 
 </body>
 </html>
+<?php /**PATH C:\xampp-8.2.1\htdocs\react\camro_ecom\camro_backend\resources\views/emails/contact.blade.php ENDPATH**/ ?>

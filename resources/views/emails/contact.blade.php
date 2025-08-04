@@ -1,44 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>New Contact Message</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f8f9fa;">
 
-    <div class="container">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">New Contact Message Received</h4>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered table-striped mb-0">
-                    <tbody>
-                        <tr>
-                            <th scope="row">Name</th>
-                            <td>{{ $contactData['name'] }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Email</th>
-                            <td>{{ $contactData['email'] }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Phone</th>
-                            <td>{{ $contactData['phone'] }}</td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Message</th>
-                            <td>{{ $contactData['message'] }}</td>
-                        </tr>
-                    </tbody>
+<body style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 20px;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+        <tr>
+            <td style="background-color: #007bff; padding: 15px; color: #fff; font-size: 18px; font-weight: bold; border-bottom: 1px solid #dee2e6; text-align: center; border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                New Contact Message Received
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding: 20px;">
+                <table width="100%" cellpadding="5" cellspacing="0" border="0" style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="font-weight: bold; background-color: #f8f9fa; border: 1px solid #dee2e6;">Name</td>
+                        <td style="border: 1px solid #dee2e6;">{{ $contactData['name'] }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; background-color: #f8f9fa; border: 1px solid #dee2e6;">Email</td>
+                        <td style="border: 1px solid #dee2e6;">{{ $contactData['email'] }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; background-color: #f8f9fa; border: 1px solid #dee2e6;">Phone</td>
+                        <td style="border: 1px solid #dee2e6;">{{ $contactData['phone'] }}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; background-color: #f8f9fa; border: 1px solid #dee2e6;">Message</td>
+                        <td style="border: 1px solid #dee2e6;">{{ $contactData['message'] }}</td>
+                    </tr>
                 </table>
-            </div>
-            <div class="card-footer text-muted text-center">
-                Thank you!
-            </div>
-        </div>
-    </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td align="center" style="padding:15px; background-color:#000000ff; font-size:12px; color:#777;">
+                &copy; {{ date('Y') }} Camro Ecom. All rights reserved.
+            </td>
+        </tr>
+    </table>
 
 </body>
+
 </html>

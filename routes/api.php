@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
- 
+
 
 
 // Route::get('/user', function (Request $request) {
@@ -22,7 +22,9 @@ use App\Models\User;
 
 Route::post('/send-mail', [MailApiController::class, 'send']);
 
-Route::get('/website/api/email/verify', [UserController::class, 'verifyEmail']);
+
+Route::get('/email/verify', [UserController::class, 'verifyEmail'])
+    ->name('user.verify.email');
 
 // All admin routes
 Route::prefix('admin')->group(function () {

@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMails;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\URL;
 
 class UserController extends Controller
 {
@@ -55,11 +57,24 @@ class UserController extends Controller
         $user->save();
 
         $encryptedId = Crypt::encryptString($user->id);
-        $verificationLink = url('/website/api/email/verify?id=' . urlencode($encryptedId));
+
+        $permanentLink = URL::signedRoute(
+            'user.verify.email',
+            ['id' => $encryptedId]
+        );
+
+
+        // Laravel (backend)
+        $parsed = parse_url($permanentLink);
+        parse_str($parsed['query'], $queryParams);
+
+        $verificationQuery = http_build_query($queryParams); // id, signature, expires
+        $verificationLink = "http://localhost:5173/user-verify/verify?{$verificationQuery}";
+
 
 
         $emailData = [
-            'template' => 'email_verification',
+            'template' => $request->template,
             'name' => $user->first_name . ' ' . $user->last_name,
             'email' => $user->email,
             'verification_link' => $verificationLink
@@ -150,31 +165,42 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Logged out']);
     }
+
+
     public function verifyEmail(Request $request)
     {
         try {
-            $encryptedId = $request->query('id');
-            $userId = Crypt::decryptString($encryptedId);
-
-            $user = User::find($userId);
-
-            if (!$user) {
-                return response()->json(['message' => 'User not found'], 404);
-            }
-
-            // Already verified?
-            if ($user->email_verified) {
-                return response()->json(['message' => 'Email already verified.'], 200);
-            }
-
-            $user->email_verified = 1;
-            $user->email_verified_at = now();
-            $user->save();
-
-            // Redirect or JSON message
-            return response()->json(['message' => 'Email verified successfully!'], 200);
+            $decryptedId = Crypt::decryptString($request->id);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Invalid or expired verification link.'], 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid or expired verification link.'
+            ], 400);
         }
+
+        $user = User::find($decryptedId);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        if ($user->email_verified) {
+            return response()->json([
+                'status' => 'info',
+                'message' => 'Email already verified.'
+            ]);
+        }
+
+        $user->email_verified = 1;
+        $user->email_verified_at = now();
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Email verified successfully.'
+        ]);
     }
 }
